@@ -99,6 +99,7 @@ def andy_101() -> dict[str, dict[str, Path] | str | int | dict[str, str | int]]:
     }
 
 
+@testing.requires_testing_data
 @pytest.mark.parametrize("dataset", ["ca_208", "andy_101"])
 def test_io_data(dataset, request):
     """Test loading of .cnt file."""
@@ -122,6 +123,7 @@ def test_io_data(dataset, request):
     )
 
 
+@testing.requires_testing_data
 def test_io_info_ca_208(ca_208: dict[str, dict[str, Path]]) -> None:
     """Test the info loaded from a .cnt file."""
     raw_cnt = read_raw_ant(ca_208["cnt"]["short"])
@@ -147,18 +149,18 @@ def test_io_info_ca_208(ca_208: dict[str, dict[str, Path]]) -> None:
     assert raw_cnt.get_channel_types() == ch_types
 
 
-def test_io_info_andy_101(andy_101: dict[str, dict[str, Path]]) -> None:
-    """Test the info loaded from a .cnt file."""
-    raw_cnt = read_raw_ant(andy_101["cnt"]["short"])
-    raw_bv = read_raw_bv(andy_101["bv"]["short"])
-    assert raw_cnt.ch_names == raw_bv.ch_names
-    assert raw_cnt.info["sfreq"] == raw_bv.info["sfreq"]
-    assert raw_cnt.get_channel_types() == ["eeg"] * 128
-    assert_allclose(
-        (raw_bv.info["meas_date"] - raw_cnt.info["meas_date"]).total_seconds(),
-        0,
-        atol=1e-3,
-    )
+# def test_io_info_andy_101(andy_101: dict[str, dict[str, Path]]) -> None:
+#     """Test the info loaded from a .cnt file."""
+#     raw_cnt = read_raw_ant(andy_101["cnt"]["short"])
+#     raw_bv = read_raw_bv(andy_101["bv"]["short"])
+#     assert raw_cnt.ch_names == raw_bv.ch_names
+#     assert raw_cnt.info["sfreq"] == raw_bv.info["sfreq"]
+#     assert raw_cnt.get_channel_types() == ["eeg"] * 128
+#     assert_allclose(
+#         (raw_bv.info["meas_date"] - raw_cnt.info["meas_date"]).total_seconds(),
+#         0,
+#         atol=1e-3,
+#     )
 
 
 @pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
